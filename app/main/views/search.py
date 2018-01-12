@@ -216,10 +216,9 @@ def supplier_search():
     services = {}
     for supplier in response['hits']['hits']:
         details = supplier['_source']
-
         domains = details['domains']
 
-        tags = domains['assessed'] + domains['unassessed']
+        tags = domains
 
         services = {}
         for tag in sorted(tags):
