@@ -5,6 +5,7 @@
     "digital-outcome": "Finding a team to provide an outcome",
     "digital-professionals": "Finding an individual specialist",
     "user-research-participants": "Find user research participants",
+    "training": "Find a training supplier"
   }[lot.slug]
   %}
 
@@ -42,6 +43,7 @@
             "digital-outcome": "To find a digital outcome, eg a booking system or an accessibility audit, you need to tell sellers about the situation or problem. They’ll then propose a solution to meet your needs.",
             "digital-professionals": "",
             "user-research-participants": "To find user research participants, you need to tell sellers about the types of participants you want to test your service with. They’ll then tell you what they can do and how much it will cost.",
+            "training": "To find a training supplier to provide your training needs"
           }[lot.slug]
         }}
       </p>
@@ -55,6 +57,10 @@
       <p>
         As part of your research remember you can <a href="{{ url_for('.supplier_search') }}">contact sellers</a> for their input. Then, once you have budget approval, write and publish your brief. When you’re ready to start, click the Create Brief button.
       </p>
+      {% elif lot.slug == "training" %}
+      <p>
+        Publish training brief, that describes your training needs
+      </p>
       {% endif %}
 
       <h2>Step 2. Respond to seller questions</h2>
@@ -66,6 +72,10 @@
       <p>
         After publishing your brief, sellers may ask questions via email. <a href="https://marketplace1.zendesk.com/hc/en-gb/articles/115011257447-Answer-questions">You must respond to their questions</a> by posting the question and your answer at the bottom of your brief, so all potential applicants can see the information.
       </p>
+      {% elif lot.slug == "training" %}
+      <p>
+        After publishing your brief, sellers may ask questions via email. <a href="https://marketplace1.zendesk.com/hc/en-gb/articles/115011257447-Answer-questions">You must respond to their questions</a> by posting the question and your answer at the bottom of your brief, so all potential applicants can see the information.
+      </p>
       {% endif %}
 
       <h2>Step 3. Evaluate applicants and award a contract</h2>
@@ -74,6 +84,10 @@
         After your brief closes, evaluate the applicants using the criteria you set when creating the brief and <a href="https://marketplace1.zendesk.com/hc/en-gb/articles/115011257587-Award-a-contract">award the contract</a> to the applicant who best meets your needs and represents value for money.
       </p>
       {% elif lot.slug == "digital-outcome" %}
+      <p>
+        After your brief closes, evaluate the applicants using the criteria you set when creating the brief and <a href="https://marketplace1.zendesk.com/hc/en-gb/articles/115011257587-Award-a-contract">award the contract</a> to the applicant who best meets your needs and represents value for money.
+      </p>
+      {% elif lot.slug == "training" %}
       <p>
         After your brief closes, evaluate the applicants using the criteria you set when creating the brief and <a href="https://marketplace1.zendesk.com/hc/en-gb/articles/115011257587-Award-a-contract">award the contract</a> to the applicant who best meets your needs and represents value for money.
       </p>

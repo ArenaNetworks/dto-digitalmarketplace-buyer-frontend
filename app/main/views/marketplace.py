@@ -138,9 +138,14 @@ def get_brief_by_id(framework_slug, brief_id):
     application_specialist_url = application_url
     application_specialist_submitted_url = None
 
+    lot = brief['lotSlug']
+
     if published_date >= feature_date:
         application_specialist_url = "/2/brief/{}/specialist/respond".format(brief['id'])
         application_specialist_submitted_url = "/2/brief/{}/specialist/respond/submitted".format(brief['id'])
+
+    if lot == 'training':
+        application_url = "/2/brief/{}/training/respond".format(brief['id'])
 
     add_case_study_url = None
 

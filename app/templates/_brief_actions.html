@@ -41,7 +41,7 @@
 {% if brief.status == 'live' and (not is_restricted_brief or selected_for_brief) %}
 
     {% if brief_responses %}
-        {% if brief.lot == 'digital-outcome' or (brief.lot == 'digital-professionals' and (brief_responses|length >= 3 or not application_specialist_submitted_url)) %}
+        {% if brief.lot == 'training' or brief.lot == 'digital-outcome' or (brief.lot == 'digital-professionals' and (brief_responses|length >= 3 or not application_specialist_submitted_url)) %}
             {% with
                 url = "{}/sellers/opportunities/{}/responses/result".format(config['URL_PREFIX'],
                 brief.id),
@@ -189,7 +189,7 @@
                     </div>
                 {% endif %}
 
-            {% elif brief.lot == 'digital-outcome' %}
+            {% elif brief.lot == 'digital-outcome' or brief.lot == 'training' %}
                 {% if unassessed_domains|length == 0 and assessed_domains|length == 0 %}
                     <h2>What services do you offer?</h2>
                     <p>
