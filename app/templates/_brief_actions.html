@@ -238,9 +238,9 @@
         {% elif (profile_application_status == 'approved' or not profile_application_status) and current_user.role == 'supplier' %}
             {% if brief.lot == 'digital-professionals' %}
                 {% if brief.areaOfExpertise not in assessed_domains and
-            brief.areaOfExpertise not in unassessed_domains and
-            brief.areaOfExpertise not in supplier_assessments.unassessed and
-            brief.areaOfExpertise not in supplier_assessments.assessed %}
+                      brief.areaOfExpertise not in unassessed_domains and
+                      brief.areaOfExpertise not in supplier_assessments.unassessed and
+                      brief.areaOfExpertise not in supplier_assessments.assessed %}
                     <h2>Have you got expertise in {{ brief.areaOfExpertise }}?</h2>
                     <p>
                         Before you can apply for this opportunity, you need to:
@@ -262,9 +262,9 @@
                         {% endwith %}
                       </span>
                     </div>
-                {% elif brief.areaOfExpertise not in assessed_domains
-            and brief.areaOfExpertise not in supplier_assessments.unassessed
-            and brief.areaOfExpertise not in supplier_assessments.assessed %}
+                {% elif brief.areaOfExpertise not in assessed_domains and
+                        brief.areaOfExpertise not in supplier_assessments.unassessed and
+                        brief.areaOfExpertise not in supplier_assessments.assessed %}
                     <h2>Interested in this opportunity?</h2>
                     <p>
                         Before you can apply for this opportunity, you need to:
@@ -286,9 +286,9 @@
                         {% endwith %}
                     </span>
                     </div>
-                {% elif brief.areaOfExpertise not in assessed_domains
-            and brief.areaOfExpertise in supplier_assessments.unassessed
-            and brief.areaOfExpertise not in supplier_assessments.assessed %}
+                {% elif brief.areaOfExpertise not in assessed_domains and
+                        brief.areaOfExpertise in supplier_assessments.unassessed and
+                        brief.areaOfExpertise not in supplier_assessments.assessed %}
                     <h2>Interested in this opportunity?</h2>
                     <p>
                         Before you can apply for this opportunity, you need to:
@@ -310,7 +310,8 @@
                     {% endwith %}
                   </span>
                     </div>
-                {% elif brief.areaOfExpertise in supplier_assessments.assessed or brief.areaOfExpertise in assessed_domains %}
+                {% elif brief.areaOfExpertise in supplier_assessments.assessed or
+                        brief.areaOfExpertise in assessed_domains %}
                     <h2>Interested in this opportunity?</h2>
                     <p>
                         Before you can apply for this opportunity, you need to:
