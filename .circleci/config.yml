@@ -68,6 +68,8 @@ jobs:
       - run: 
           name: Npm Build
           command: |
+            echo $CF_USER_STAGING
+            echo $CF_PASSWORD_STAGING
             npm run frontend-build:production
 
       - persist_to_workspace:
