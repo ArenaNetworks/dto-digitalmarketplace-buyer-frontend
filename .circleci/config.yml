@@ -70,6 +70,8 @@ jobs:
           command: |
             echo $CF_USER_STAGING
             echo $CF_PASSWORD_STAGING
+            echo $CF_USER_PROD
+            echo $CF_PASSWORD_PROD
             npm run frontend-build:production
 
       - persist_to_workspace:
