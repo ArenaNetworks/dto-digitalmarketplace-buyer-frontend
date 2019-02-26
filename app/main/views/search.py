@@ -219,9 +219,10 @@ def supplier_search():
         details = supplier['_source']
 
         domains = details['domains']
+        assessed_domains = domains.get('assessed', [])
 
         services = {}
-        for tag in sorted(domains.get('assessed', [])):
+        for tag in sorted(assessed_domains):
             services[tag] = True
         seller_type = details.get('seller_type', {})
 
@@ -283,7 +284,7 @@ def supplier_search():
             supplier['profile_url'] = '/supplier/%s' % details.get('supplierCode')
 
             services = {}
-            for tag in sorted(domains.get('assessed', [])):
+            for tag in sorted(assessed_domains):
                 services[tag] = True
 
             result = {
