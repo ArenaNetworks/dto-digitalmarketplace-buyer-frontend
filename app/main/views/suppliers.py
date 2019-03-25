@@ -69,6 +69,7 @@ def get_supplier(code):
         'action': "/sellers/edit",
         'submit_url': "/sellers/edit"
     }
+    props['application']['showRejectedCaseStudies'] = True if current_user.role == 'admin' or owns_profile else False
 
     rendered_component = render_component('bundles/SellerRegistration/ApplicationPreviewWidget.js', props)
 
