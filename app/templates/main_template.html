@@ -36,6 +36,12 @@
 
   <header role="banner" class="{% block header_class %}{% endblock %}">
     <section>
+      {% if current_user.is_authenticated %}
+        {% set userType = current_user.role %}
+      {% else %}
+        {% set userType = '' %}
+      {% endif %}
+
       {% set dashboardText = 'Dashboard' %}
       {% if current_user.role == 'buyer' %}
         {% set dashboardUrl = '/2/buyer-dashboard' %}
@@ -44,12 +50,6 @@
         {% set dashboardUrl = '/sellers/application' %}
       {% else %}
         {% set dashboardUrl = '/sellers' %}
-      {% endif %}
-
-      {% if current_user.is_authenticated %}
-        {% set userType = current_user.role %}
-      {% else %}
-        {% set userType = '' %}
       {% endif %}
 
       {% if 'SELLER_REGISTRATION' is active_feature %}
