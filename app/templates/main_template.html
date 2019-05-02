@@ -41,6 +41,7 @@
       {% else %}
         {% set userType = '' %}
       {% endif %}
+
       {% if 'SELLER_REGISTRATION' is active_feature %}
         {% set registerUrl = '/2/signup' %}
         {% set registerText = 'Join the Marketplace' %}
@@ -48,6 +49,7 @@
         {% set registerUrl = url_for('main.buyer_signup') %}
         {% set registerText = 'Register' %}
       {% endif %}
+
       {% set props = {
       'registerUrl': registerUrl,
       'registerText': registerText,
