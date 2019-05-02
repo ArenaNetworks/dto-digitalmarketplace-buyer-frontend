@@ -45,6 +45,11 @@
       {% else %}
         {% set dashboardUrl = '/sellers' %}
       {% endif %}
+      {% if current_user.is_authenticated %}
+        {% set userType = current_user.role %}
+      {% else %}
+        {% set userType = '' %}
+      {% endif %}
       {% if 'SELLER_REGISTRATION' is active_feature %}
         {% set registerUrl = '/2/signup' %}
         {% set registerText = 'Join the Marketplace' %}
@@ -59,7 +64,8 @@
       'dashboardUrl': dashboardUrl,
       'dashboardText': dashboardText,
       'logoutUrl': url_for('main.logout'),
-      'isAuthenticated': current_user.is_authenticated
+      'isAuthenticated': current_user.is_authenticated,
+      'userType': userType
       } %}
       {% set auth_component = render_component('bundles/Header/AuthWidget.js', props, True) %}
       {{ auth_component|as('react_bundle') }}
