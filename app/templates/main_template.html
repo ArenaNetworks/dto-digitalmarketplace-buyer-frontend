@@ -45,6 +45,7 @@
       {% else %}
         {% set dashboardUrl = '/sellers' %}
       {% endif %}
+
       {% if current_user.is_authenticated %}
         {% set userType = current_user.role %}
       {% else %}
