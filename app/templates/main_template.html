@@ -64,14 +64,14 @@
       {% endif %}
 
       {% set props = {
-      'registerUrl': registerUrl,
-      'registerText': registerText,
-      'loginUrl': url_for('main.render_login'),
-      'dashboardUrl': dashboardUrl,
-      'notificationCount': notification_count,
       'dashboardText': dashboardText,
-      'logoutUrl': url_for('main.logout'),
+      'dashboardUrl': dashboardUrl,
       'isAuthenticated': current_user.is_authenticated,
+      'loginUrl': url_for('main.render_login'),
+      'logoutUrl': url_for('main.logout'),
+      'notificationCount': notification_count,
+      'registerText': registerText,
+      'registerUrl': registerUrl,
       'userType': userType
       } %}
       {% set auth_component = render_component('bundles/Header/AuthWidget.js', props, True) %}
