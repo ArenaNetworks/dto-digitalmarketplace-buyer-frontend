@@ -82,6 +82,11 @@ def privacy_policy():
     return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001027895', code=301)
 
 
+@main.route('/security')
+def security():
+    return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001027915', code=301)
+
+
 def _is_supplier_selected_for_brief(brief):
     def domain(email):
         return email.split('@')[-1]
