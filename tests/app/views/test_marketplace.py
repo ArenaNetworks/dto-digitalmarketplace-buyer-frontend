@@ -87,11 +87,7 @@ class TestStaticMarketplacePages(BaseApplicationTest):
 
     def test_toc_page(self):
         res = self.client.get(self.expand_path('/terms-of-use'))
-        assert_equal(200, res.status_code)
-        assert_true(
-            'TermsofUse'
-            in self._strip_whitespace(res.get_data(as_text=True))
-        )
+        assert_equal(301, res.status_code)
 
 
 class TestBriefPage(BaseApplicationTest):
