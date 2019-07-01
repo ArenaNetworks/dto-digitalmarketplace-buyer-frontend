@@ -92,6 +92,11 @@ def disclaimer():
     return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001028135', code=301)
 
 
+@main.route('/copyright')
+def copyright():
+    return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001037656', code=301)
+
+
 def _is_supplier_selected_for_brief(brief):
     def domain(email):
         return email.split('@')[-1]
