@@ -74,11 +74,7 @@ def content(template_name):
 
 @main.route('/terms-of-use')
 def terms_of_use():
-    terms = get_current_terms_version()
-    return render_template(
-        'content/terms-of-use/_template.html',
-        terms_content=terms.template_file,
-        update_time=terms.datetime.date())
+    return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001037036', code=301)
 
 
 def _is_supplier_selected_for_brief(brief):
