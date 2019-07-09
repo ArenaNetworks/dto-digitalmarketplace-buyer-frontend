@@ -30,10 +30,7 @@ def redirect_logged_in_user(next_url=None, validation_result=None):
             return redirect('/2/buyer-dashboard')
 
         if current_user.role == 'supplier':
-            if has_messages:
-                return redirect('/2/seller-dashboard/notifications')
-
-            return redirect('/2/opportunities')
+            return redirect('/2/seller-dashboard')
 
         if current_user.role == 'applicant':
             return redirect('/sellers/application')
