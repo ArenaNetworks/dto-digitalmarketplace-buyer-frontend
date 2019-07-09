@@ -220,7 +220,7 @@ def supplier_search():
 
         domains = details['domains']
 
-        tags = domains['assessed'] + domains['unassessed']
+        tags = domains['assessed']
 
         services = {}
         for tag in sorted(tags):
