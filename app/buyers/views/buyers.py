@@ -724,7 +724,8 @@ def publish_brief(framework_slug, lot_slug, brief_id):
             unanswered_required=unanswered_required,
             sections=sections,
             brief=brief,
-            current_date=pendulum.now(TZ)
+            current_date=pendulum.now(TZ),
+            has_publish_permission=current_user.has_permission('publish_opportunities')
         )
 
 
