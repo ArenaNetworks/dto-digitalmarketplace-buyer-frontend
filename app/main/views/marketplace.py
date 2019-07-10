@@ -66,6 +66,9 @@ def content(template_name):
     if template_name == 'capabilities-and-rates':
         return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360000080555-Daily-rates-trend-charts',
                         code=301)
+    if template_name == 'contact-us':
+        return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001050936',
+                        code=301)
     try:
         return render_template('content/{}.html'.format(template_name))
     except:  # noqa
