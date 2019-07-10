@@ -695,6 +695,10 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     if request.method == 'POST':
         if unanswered_required > 0:
             abort(400, 'There are still unanswered required questions')
+
+        if not current_user.has_permission('publish_opportunities'):
+            return redirect('/2/request-access/publish_opportunities')
+
         data_api_client.publish_brief(brief_id, brief_user_name)
 
         brief_url = '/2/brief/{}/published'.format(brief_id)
@@ -724,8 +728,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
             unanswered_required=unanswered_required,
             sections=sections,
             brief=brief,
-            current_date=pendulum.now(TZ),
-            has_publish_permission=current_user.has_permission('publish_opportunities')
+            current_date=pendulum.now(TZ)
         )
 
 
