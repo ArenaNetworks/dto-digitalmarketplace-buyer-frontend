@@ -66,6 +66,9 @@ def content(template_name):
     if template_name == 'capabilities-and-rates':
         return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360000080555-Daily-rates-trend-charts',
                         code=301)
+    if template_name == 'contact-us':
+        return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001050936',
+                        code=301)
     try:
         return render_template('content/{}.html'.format(template_name))
     except:  # noqa
@@ -95,6 +98,11 @@ def disclaimer():
 @main.route('/copyright')
 def copyright():
     return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/360001037656', code=301)
+
+
+@main.route('/become-a-seller')
+def becomeSeller():
+    return redirect('https://marketplace1.zendesk.com/hc/en-gb/articles/115011258607', code=301)
 
 
 def _is_supplier_selected_for_brief(brief):
