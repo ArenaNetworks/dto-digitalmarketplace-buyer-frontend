@@ -676,8 +676,6 @@ def publish_brief(framework_slug, lot_slug, brief_id):
         abort(404)
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
-    brief_users = brief['users'][0]
-    brief_user_name = brief_users['name']
 
     sections = content.summary(brief)
     question_and_answers = {}
@@ -699,7 +697,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
         if not current_user.has_permission('publish_opportunities'):
             return redirect('/2/request-access/publish_opportunities')
 
-        data_api_client.publish_brief(brief_id, brief_user_name)
+        data_api_client.publish_brief(brief_id, current_user.name)
 
         brief_url = '/2/brief/{}/published'.format(brief_id)
 
@@ -718,8 +716,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
 
         return redirect(brief_url)
     else:
-
-        email_address = brief_users['emailAddress']
+        email_address = current_user.email_address
 
         return render_template_with_csrf(
             "buyers/brief_publish_confirmation.html",
