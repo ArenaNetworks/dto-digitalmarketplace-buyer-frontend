@@ -36,6 +36,18 @@ def brief_can_be_edited(brief):
     return brief.get('status') == 'draft'
 
 
+def has_permission_to_edit_brief(brief=None):
+    is_permitted = (
+        current_user.has_permission('create_drafts') or
+        current_user.has_permission('publish_opportunities')
+    )
+
+    if brief and brief_can_be_edited(brief):
+        return is_permitted
+    else:
+        return is_permitted
+
+
 def brief_is_withdrawn(brief):
     return brief.get('status') == 'withdrawn'
 
