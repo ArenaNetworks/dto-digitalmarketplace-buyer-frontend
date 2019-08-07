@@ -39,6 +39,12 @@
       {% set dashboardText = 'Dashboard' %}
       {% set dashboardUrl = '' %}
       {% set notification_count = '' %}
+      {% set userType = '' %}
+
+      {% if current_user.is_authenticated %}
+        {% set userType = current_user.role %}
+      {% endif %}
+
       {% if current_user.role == 'buyer' %}
         {% set dashboardUrl = '/2/buyer-dashboard' %}
       {% elif current_user.role == 'applicant'  %}
@@ -48,6 +54,7 @@
         {% set dashboardUrl = '/2/seller-dashboard' %}
         {% set notification_count = current_user.notification_count %}
       {% endif %}
+
       {% if 'SELLER_REGISTRATION' is active_feature %}
         {% set registerUrl = '/2/signup' %}
         {% set registerText = 'Join the Marketplace' %}
@@ -55,15 +62,17 @@
         {% set registerUrl = url_for('main.buyer_signup') %}
         {% set registerText = 'Register' %}
       {% endif %}
+
       {% set props = {
-      'registerUrl': registerUrl,
-      'registerText': registerText,
-      'loginUrl': url_for('main.render_login'),
-      'dashboardUrl': dashboardUrl,
-      'notificationCount': notification_count,
       'dashboardText': dashboardText,
+      'dashboardUrl': dashboardUrl,
+      'isAuthenticated': current_user.is_authenticated,
+      'loginUrl': url_for('main.render_login'),
       'logoutUrl': url_for('main.logout'),
-      'isAuthenticated': current_user.is_authenticated
+      'notificationCount': notification_count,
+      'registerText': registerText,
+      'registerUrl': registerUrl,
+      'userType': userType
       } %}
       {% set auth_component = render_component('bundles/Header/AuthWidget.js', props, True) %}
       {{ auth_component|as('react_bundle') }}

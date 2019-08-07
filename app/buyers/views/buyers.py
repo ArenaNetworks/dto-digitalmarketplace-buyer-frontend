@@ -32,7 +32,8 @@ from app.helpers.buyers_helpers import (
     is_brief_correct,
     section_has_at_least_one_required_question,
     allowed_email_domain,
-    remove_non_cascade_fields
+    remove_non_cascade_fields,
+    has_permission_to_edit_brief
 )
 from dmutils.forms import render_template_with_csrf
 from dmutils.logging import notify_team
@@ -150,6 +151,10 @@ def buyer_overview():
 def start_new_brief(framework_slug, lot_slug):
     if lot_slug in ['digital-outcome', 'digital-professionals']:
         abort(404)
+
+    if not has_permission_to_edit_brief():
+        return redirect('/2/request-access/create_drafts')
+
     framework, lot = get_framework_and_lot(framework_slug, lot_slug, data_api_client,
                                            status='live', must_allow_brief=True)
 
@@ -173,6 +178,10 @@ def start_new_brief(framework_slug, lot_slug):
 def create_new_brief(framework_slug, lot_slug):
     if lot_slug in ['digital-outcome', 'digital-professionals']:
         abort(404)
+
+    if not has_permission_to_edit_brief():
+        return redirect('/2/request-access/create_drafts')
+
     framework, lot = get_framework_and_lot(framework_slug, lot_slug, data_api_client,
                                            status='live', must_allow_brief=True)
 
@@ -275,6 +284,9 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     ) or not brief_can_be_edited(brief):
         abort(404)
 
+    if not has_permission_to_edit_brief(brief):
+        return redirect('/2/request-access/create_drafts')
+
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
     sections = content.summary(brief)
     section = sections.get_section(section_slug)
@@ -303,6 +315,9 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
             brief, framework_slug, lot_slug, current_user.id
     ) or not brief_can_be_edited(brief):
         abort(404)
+
+    if not has_permission_to_edit_brief(brief):
+        return redirect('/2/request-access/create_drafts')
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter(
         {'lot': brief['lotSlug']}
@@ -336,6 +351,9 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
             brief, framework_slug, lot_slug, current_user.id
     ) or not brief_can_be_edited(brief):
         abort(404)
+
+    if not has_permission_to_edit_brief(brief):
+        return redirect('/2/request-access/create_drafts')
 
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
     section = content.get_section(section_id)
@@ -675,9 +693,10 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     ) or not brief_can_be_edited(brief):
         abort(404)
 
+    if not has_permission_to_edit_brief(brief):
+        return redirect('/2/request-access/publish_opportunities')
+
     content = content_loader.get_manifest(brief['frameworkSlug'], 'edit_brief').filter({'lot': brief['lotSlug']})
-    brief_users = brief['users'][0]
-    brief_user_name = brief_users['name']
 
     sections = content.summary(brief)
     question_and_answers = {}
@@ -695,7 +714,11 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     if request.method == 'POST':
         if unanswered_required > 0:
             abort(400, 'There are still unanswered required questions')
-        data_api_client.publish_brief(brief_id, brief_user_name)
+
+        if not current_user.has_permission('publish_opportunities'):
+            return redirect('/2/request-access/publish_opportunities')
+
+        data_api_client.publish_brief(brief_id, current_user.name)
 
         brief_url = '/2/brief/{}/published'.format(brief_id)
 
@@ -714,8 +737,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
 
         return redirect(brief_url)
     else:
-
-        email_address = brief_users['emailAddress']
+        email_address = current_user.email_address
 
         return render_template_with_csrf(
             "buyers/brief_publish_confirmation.html",
@@ -758,6 +780,9 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     ) or not brief_can_be_edited(brief):
         abort(404)
 
+    if not has_permission_to_edit_brief(brief):
+        return redirect('/2/request-access/create_drafts')
+
     data_api_client.delete_brief(brief_id, current_user.email_address)
     flash({"requirements_deleted": brief.get("title")})
     return redirect('/2/buyer-dashboard')
@@ -767,76 +792,14 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     "/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/supplier-questions",
     methods=["GET"])
 def supplier_questions(framework_slug, lot_slug, brief_id):
-    get_framework_and_lot(framework_slug, lot_slug, data_api_client, status='live', must_allow_brief=True)
-    brief = data_api_client.get_brief(brief_id)["briefs"]
-
-    if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
-    ) and not allowed_email_domain(current_user.id, brief, data_api_client):
-        abort(404)
-
-    if brief["status"] != "live":
-        abort(404)
-
-    brief['clarificationQuestions'] = [
-        dict(question, number=index+1)
-        for index, question in enumerate(brief['clarificationQuestions'])
-    ]
-
-    return render_template(
-        "buyers/supplier_questions.html",
-        brief=brief,
-    )
+    return redirect('/2/brief/{}/questions'.format(brief_id))
 
 
 @buyers.route(
     "/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/supplier-questions/answer-question",
     methods=["GET", "POST"])
 def add_supplier_question(framework_slug, lot_slug, brief_id):
-    get_framework_and_lot(framework_slug, lot_slug, data_api_client, status='live', must_allow_brief=True)
-    brief = data_api_client.get_brief(brief_id)["briefs"]
-
-    if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
-    ) and not allowed_email_domain(current_user.id, brief, data_api_client):
-        abort(404)
-
-    if brief["status"] != "live":
-        abort(404)
-
-    content = content_loader.get_manifest(brief['frameworkSlug'], "clarification_question")
-    section = content.get_section(content.get_next_editable_section_id())
-    update_data = section.get_data(request.form)
-
-    errors = {}
-    status_code = 200
-
-    if request.method == "POST":
-        try:
-            data_api_client.add_brief_clarification_question(brief_id,
-                                                             update_data['question'],
-                                                             update_data['answer'],
-                                                             current_user.email_address)
-
-            return redirect(
-                url_for('.supplier_questions', framework_slug=brief['frameworkSlug'], lot_slug=brief['lotSlug'],
-                        brief_id=brief['id']))
-        except HTTPError as e:
-            if e.status_code != 400:
-                raise
-            brief.update(update_data)
-            errors = section.get_error_messages(e.message)
-            status_code = 400
-
-    return render_template_with_csrf(
-        "buyers/edit_brief_question.html",
-        status_code=status_code,
-        brief=brief,
-        section=section,
-        question=section.questions[0],
-        button_label="Publish question and answer",
-        errors=errors
-    )
+    return redirect('/2/brief/{}/questions'.format(brief_id))
 
 
 def send_new_opportunity_email_to_sellers(brief_json, brief_url):

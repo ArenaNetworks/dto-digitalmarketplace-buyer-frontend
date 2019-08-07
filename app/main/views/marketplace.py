@@ -17,7 +17,11 @@ from app.main.utils import get_page_list
 from app import data_api_client, content_loader
 from app.main import main
 from app.helpers.terms_helpers import check_terms_acceptance, get_current_terms_version
-from app.helpers.buyers_helpers import get_framework_and_lot, count_unanswered_questions
+from app.helpers.buyers_helpers import (
+    get_framework_and_lot,
+    count_unanswered_questions,
+    has_permission_to_edit_brief
+)
 
 from ..forms.brief_forms import BriefSearchForm
 
@@ -134,7 +138,11 @@ def get_brief_by_id(framework_slug, brief_id):
     if brief['lotSlug'] in ['rfx', 'atm', 'specialist']:
         return redirect('/2/%s/opportunities/%s' % (framework_slug, brief_id), 301)
     if brief['status'] not in ['live', 'closed']:
-        if not current_user.is_authenticated or brief['users'][0]['id'] != current_user.id:
+        if (
+            not current_user.is_authenticated or
+            (brief['users'] and brief['users'][0]['id'] != current_user.id) or
+            current_user.id not in [tb.get('userId') for tb in brief.get('teamBriefs', [])]
+        ):
             abort(404, "Opportunity '{}' can not be found".format(brief_id))
 
     if current_user.is_authenticated and current_user.role == 'supplier':

@@ -28,11 +28,24 @@ def is_brief_associated_with_user(brief, current_user_id):
     if current_user and current_user.role == 'admin':
         return True
     user_ids = [user.get('id') for user in brief.get('users', [])]
+    user_ids = user_ids + [tb.get('userId') for tb in brief.get('teamBriefs', [])]
     return current_user_id in user_ids
 
 
 def brief_can_be_edited(brief):
     return brief.get('status') == 'draft'
+
+
+def has_permission_to_edit_brief(brief=None):
+    is_permitted = (
+        current_user.has_permission('create_drafts') or
+        current_user.has_permission('publish_opportunities')
+    )
+
+    if brief and brief_can_be_edited(brief):
+        return is_permitted
+    else:
+        return is_permitted
 
 
 def brief_is_withdrawn(brief):
