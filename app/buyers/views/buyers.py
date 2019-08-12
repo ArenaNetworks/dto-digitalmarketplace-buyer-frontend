@@ -149,11 +149,8 @@ def buyer_overview():
 
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['GET'])
 def start_new_brief(framework_slug, lot_slug):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
-
-    if lot_slug in ['training']:
-        return redirect('/2/buyer-training2/create')
 
     if not has_permission_to_edit_brief():
         return redirect('/2/request-access/create_drafts')
