@@ -16,6 +16,17 @@
     </div>
     <br />
   {% endif%}
+  {% if brief and brief.lot == 'training' and brief.status == 'draft' %}
+    <div class="au-page-alerts au-page-alerts--warning">
+        <h2>
+            This page has been retired.
+        </h2>
+        <p class="banner-message">
+              Use the <a href="/2/buyer-training2/create">new training approach</a> to publish this opportunity.
+        </p>
+    </div>
+    <br />
+  {% endif%}
   {% if question.type != 'multiquestion' %}
     <div class="single-question-page">
   {% endif %}
