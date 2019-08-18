@@ -241,7 +241,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) and not allowed_email_domain(current_user.id, brief, data_api_client):
         abort(404)
 
@@ -280,7 +280,7 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -312,7 +312,7 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -348,7 +348,7 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -556,7 +556,7 @@ def download_brief_response_attachment(framework_slug, lot_slug, brief_id, respo
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -597,7 +597,7 @@ def download_brief_responses(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -634,7 +634,7 @@ def download_brief_responses_xlsx(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -689,7 +689,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -757,7 +757,7 @@ def view_brief_timeline(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, status='live', must_allow_brief=True)
     brief = data_api_client.get_brief(brief_id)["briefs"]
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or brief.get('status') != 'live':
         abort(404)
 
@@ -776,7 +776,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 

@@ -534,7 +534,8 @@ class TestEditBriefSubmission(BaseApplicationTest):
             '//*[@id="required3_2"]//span[contains(@class, "question-heading")]'
         )[0].text_content().strip() == "Required 3_2"
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
+    @mock.patch('app.buyers.views.buyers.is_brief_correct')
+    def test_404_if_brief_does_not_belong_to_user(self, is_brief_correct, data_api_client):
         self.login_as_buyer()
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
@@ -544,6 +545,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
             ]
         )
 
+        is_brief_correct.return_value = True
         # sanity check
         # test brief created by user_id 123
         data_api_client.get_brief.return_value = api_stubs.brief(user_id=123)
@@ -554,6 +556,7 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 200
 
+        is_brief_correct.return_value = False
         data_api_client.get_brief.return_value = api_stubs.brief(user_id=999)
         res = self.client.get(self.expand_path(
             '/buyers/frameworks/%s/requirements/%s/1234/edit/description-of-work/organisation'
@@ -562,8 +565,10 @@ class TestEditBriefSubmission(BaseApplicationTest):
 
         assert res.status_code == 404
 
-    def test_404_if_lot_does_not_allow_brief(self, data_api_client):
+    @mock.patch('app.buyers.views.buyers.is_brief_correct')
+    def test_404_if_lot_does_not_allow_brief(self, is_brief_correct, data_api_client):
         self.login_as_buyer()
+        is_brief_correct.return_value = False
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
@@ -844,8 +849,10 @@ class TestUpdateBriefSubmission(BaseApplicationTest):
         assert res.status_code == 400
         assert not data_api_client.update_brief.called
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
+    @mock.patch('app.buyers.views.buyers.is_brief_correct')
+    def test_404_if_brief_does_not_belong_to_user(self, is_brief_correct, data_api_client):
         self.login_as_buyer()
+        is_brief_correct.return_value = False
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
@@ -1345,8 +1352,10 @@ class TestDeleteBriefSubmission(BaseApplicationTest):
         assert res.status_code == 404
         assert not data_api_client.delete_brief.called
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
+    @mock.patch('app.buyers.views.buyers.is_brief_correct')
+    def test_404_if_brief_does_not_belong_to_user(self, is_brief_correct, data_api_client):
         self.login_as_buyer()
+        is_brief_correct.return_value = False
         data_api_client.get_framework.return_value = api_stubs.framework(
             slug='digital-outcomes-and-specialists',
             status='live',
@@ -1487,9 +1496,11 @@ class TestBriefSummaryPage(BaseApplicationTest):
 
             assert res.status_code == 404
 
-    def test_404_if_brief_does_not_belong_to_user(self, data_api_client):
+    @mock.patch('app.buyers.views.buyers.is_brief_correct')
+    def test_404_if_brief_does_not_belong_to_user(self, is_brief_correct, data_api_client):
         with self.app.app_context():
             self.login_as_buyer()
+            is_brief_correct.return_value = False
             data_api_client.get_framework.return_value = api_stubs.framework(
                 slug='digital-outcomes-and-specialists',
                 status='live',

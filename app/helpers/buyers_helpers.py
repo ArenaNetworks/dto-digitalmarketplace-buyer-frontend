@@ -17,19 +17,23 @@ def get_framework_and_lot(framework_slug, lot_slug, data_api_client, status=None
     return framework, lot
 
 
-def is_brief_correct(brief, framework_slug, lot_slug, current_user_id):
+def is_brief_correct(brief, framework_slug, lot_slug, current_user_id, data_api_client=None):
     return brief['frameworkSlug'] == framework_slug \
         and brief['lotSlug'] == lot_slug \
-        and is_brief_associated_with_user(brief, current_user_id) \
+        and is_brief_associated_with_user(brief, current_user_id, data_api_client) \
         and not brief_is_withdrawn(brief)
 
 
-def is_brief_associated_with_user(brief, current_user_id):
+def is_brief_associated_with_user(brief, current_user_id, data_api_client=None):
     if current_user and current_user.role == 'admin':
         return True
-    user_ids = [user.get('id') for user in brief.get('users', [])]
-    user_ids = user_ids + [tb.get('userId') for tb in brief.get('teamBriefs', [])]
-    return current_user_id in user_ids
+
+    if data_api_client:
+        has_permission_to_brief = data_api_client.req.briefs(brief.get('id')).user(current_user_id).get()
+        return has_permission_to_brief
+    else:
+        user_ids = [user.get('id') for user in brief.get('users', [])]
+        return current_user_id in user_ids
 
 
 def brief_can_be_edited(brief):
