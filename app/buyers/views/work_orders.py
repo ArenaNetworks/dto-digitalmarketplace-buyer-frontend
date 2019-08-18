@@ -48,7 +48,7 @@ def select_seller_for_work_order(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -65,7 +65,7 @@ def create_new_work_order(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -114,7 +114,7 @@ def get_work_order(work_order_id):
 
     brief = data_api_client.get_brief(work_order['briefId'])["briefs"]
     if not is_brief_associated_with_user(
-            brief, current_user.id
+            brief, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -132,7 +132,7 @@ def get_work_order_question(work_order_id, question_slug):
 
     brief = data_api_client.get_brief(work_order['briefId'])["briefs"]
     if not is_brief_associated_with_user(
-            brief, current_user.id
+            brief, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -166,7 +166,7 @@ def update_work_order_question(work_order_id, question_slug):
         abort(e.status_code)
 
     brief = data_api_client.get_brief(work_order['briefId'])["briefs"]
-    if not is_brief_associated_with_user(brief, current_user.id):
+    if not is_brief_associated_with_user(brief, current_user.id, data_api_client):
         abort(404)
 
     if questions.get(question_slug, None) is None:
