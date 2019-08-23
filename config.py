@@ -18,8 +18,6 @@ class Config(object):
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = 'Lax'
 
-    PERMANENT_SESSION_LIFETIME = 36*3600
-
     CSRF_ENABLED = True
     CSRF_TIME_LIMIT = 8*3600
 
@@ -108,6 +106,11 @@ class Config(object):
                              'yahoo.com', 'yahoo.com.au']
 
     MULTI_CANDIDATE_PUBLISHED_DATE = pendulum.create(2018, 4, 17)
+
+    # redis
+    REDIS_SESSIONS = True
+    REDIS_SERVER_HOST = '127.0.0.1'
+    REDIS_SERVER_PORT = 6379
 
 
 class Test(Config):

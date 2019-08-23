@@ -14,6 +14,11 @@ from app.helpers.terms_helpers import TermsManager
 
 from react.render import render_component
 
+import redis
+from flask_kvsession import KVSessionExtension
+from simplekv.memory.redisstore import RedisStore
+
+
 cache = Cache()
 login_manager = LoginManager()
 data_api_client = dmapiclient.DataAPIClient()
@@ -37,6 +42,13 @@ def create_app(config_name):
         login_manager=login_manager,
         cache=cache,
     )
+
+    if application.config['REDIS_SESSIONS']:
+        session_store = RedisStore(redis.StrictRedis(
+            host=application.config['REDIS_SERVER_HOST'],
+            port=application.config['REDIS_SERVER_PORT']
+        ))
+        KVSessionExtension(session_store, application)
 
     from .main import main as main_blueprint
     from .status import status as status_blueprint
