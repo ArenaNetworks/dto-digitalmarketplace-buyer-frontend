@@ -52,6 +52,7 @@ def process_login():
 
         user = User.from_json(result)
 
+        session.regenerate()
         login_user(user)
         current_app.logger.info('login.success: {user}', extra={'user': user_logging_string(user)})
         check_terms_acceptance()
@@ -69,6 +70,7 @@ def process_login():
 def logout():
     current_app.logger.info('logout: {user}', extra={'user': user_logging_string(current_user)})
     terms_of_use.set_session_flag(False)
+    session.destroy()
     logout_user()
     return redirect(url_for('.render_login'))
 
