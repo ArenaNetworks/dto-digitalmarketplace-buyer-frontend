@@ -137,6 +137,8 @@ class Test(Config):
         'TEAM_VIEW': True
     }
 
+    REDIS_SESSIONS = False
+
 
 class Development(Config):
     DEBUG = True
