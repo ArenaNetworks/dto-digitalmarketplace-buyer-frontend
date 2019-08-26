@@ -111,6 +111,10 @@ class Config(object):
     REDIS_SESSIONS = True
     REDIS_SERVER_HOST = '127.0.0.1'
     REDIS_SERVER_PORT = 6379
+    REDIS_SERVER_PASSWORD = None
+    REDIS_SSL = False
+    REDIS_SSL_HOST_REQ = None
+    REDIS_SSL_CA_CERTS = None
 
 
 class Test(Config):
@@ -175,6 +179,10 @@ class Live(Config):
     REACT_BUNDLE_URL = 'https://dm-frontend.apps.b.cld.gov.au/bundle/'
     REACT_RENDER_URL = 'https://dm-frontend.apps.b.cld.gov.au/render'
     REACT_RENDER = True
+
+    REDIS_SSL = True
+    REDIS_SSL_CA_CERTS = '/etc/ssl/certs/ca-certificates.crt'
+    REDIS_SSL_HOST_REQ = True
 
 
 class Preview(Live):
