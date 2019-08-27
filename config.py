@@ -190,15 +190,11 @@ class Preview(Live):
 
 
 class Staging(Live):
-    REDIS_SSL = True
-    REDIS_SSL_CA_CERTS = '/etc/ssl/certs/ca-certificates.crt'
-    REDIS_SSL_HOST_REQ = True
+    pass
 
 
 class Production(Live):
-    REDIS_SSL = True
-    REDIS_SSL_CA_CERTS = '/etc/ssl/certs/ca-certificates.crt'
-    REDIS_SSL_HOST_REQ = True
+    pass
 
 
 configs = {

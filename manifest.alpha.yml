@@ -8,8 +8,6 @@ applications:
   routes:
   - route: dm-alpha.apps.y.cld.gov.au
   - route: dm-alpha-buyer.apps.y.cld.gov.au
-  env:
-    FLASK_ENV: development
   services:
   - ups-secret-service
   - ups-dm-alpha-common
