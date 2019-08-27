@@ -59,11 +59,8 @@ def create_app(config_name):
             redis_opts['port'] = application.config['REDIS_SERVER_PORT']
             redis_opts['password'] = application.config['REDIS_SERVER_PASSWORD']
 
-        print redis_opts
         session_store = RedisStore(redis.StrictRedis(**redis_opts))
-        print session_store
         KVSessionExtension(session_store, application)
-        print 'session success'
 
     from .main import main as main_blueprint
     from .status import status as status_blueprint
