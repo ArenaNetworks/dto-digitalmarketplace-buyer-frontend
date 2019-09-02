@@ -12,3 +12,4 @@ applications:
   - ups-secret-service
   - ups-dm-rc-common
   - ups-dm-rc-buyer
+  - marketplace-dev-redis-sessions
