@@ -46,7 +46,7 @@ import mimetypes
 
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['GET'])
 def start_new_brief(framework_slug, lot_slug):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
 
     if not has_permission_to_edit_brief():
@@ -73,7 +73,7 @@ def start_new_brief(framework_slug, lot_slug):
 
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['POST'])
 def create_new_brief(framework_slug, lot_slug):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
 
     if not has_permission_to_edit_brief():
@@ -130,7 +130,7 @@ def create_new_brief(framework_slug, lot_slug):
 def view_brief_overview(framework_slug, lot_slug, brief_id):
     if lot_slug == 'digital-professionals' or lot_slug == 'training':
         return redirect('/2/brief/{}/overview'.format(brief_id))
-    if lot_slug in ['rfx', 'atm', 'specialist']:
+    if lot_slug in ['rfx', 'atm', 'specialist', 'training2']:
         return redirect('/2/brief/{}/overview/{}'.format(brief_id, lot_slug))
 
     framework, lot = get_framework_and_lot(
@@ -138,7 +138,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) and not allowed_email_domain(current_user.id, brief, data_api_client):
         abort(404)
 
@@ -177,7 +177,7 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -209,7 +209,7 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -245,7 +245,7 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -453,7 +453,7 @@ def download_brief_response_attachment(framework_slug, lot_slug, brief_id, respo
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -494,7 +494,7 @@ def download_brief_responses(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -531,7 +531,7 @@ def download_brief_responses_xlsx(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -578,7 +578,7 @@ def download_brief_responses_xlsx(framework_slug, lot_slug, brief_id):
 
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/publish', methods=['GET', 'POST'])
 def publish_brief(framework_slug, lot_slug, brief_id):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
     TZ = current_app.config['DM_TIMEZONE']
 
@@ -586,7 +586,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -654,7 +654,7 @@ def view_brief_timeline(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, status='live', must_allow_brief=True)
     brief = data_api_client.get_brief(brief_id)["briefs"]
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or brief.get('status') != 'live':
         abort(404)
 
@@ -673,7 +673,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
