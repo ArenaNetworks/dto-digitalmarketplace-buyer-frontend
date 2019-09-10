@@ -287,56 +287,6 @@ class TestLoginFormsNotAutofillable(BaseApplicationTest):
         )
 
 
-class TestBuyerRoleRequired(BaseApplicationTest):
-    def test_login_required_for_buyer_pages(self):
-        with self.app.app_context():
-            res = self.client.get(self.expand_path('/buyers'))
-            assert res.status_code == 302
-            assert res.location.startswith('http://localhost' + self.expand_path('/login?next=%2F'))
-
-    def test_supplier_cannot_access_buyer_pages(self):
-        with self.app.app_context():
-            self.login_as_supplier()
-            res = self.client.get(self.expand_path('/buyers'))
-            assert res.status_code == 302
-            assert res.location.startswith('http://localhost' + self.expand_path('/login?next=%2F'))
-            self.assert_flashes('buyer-role-required', expected_category='error')
-
-    @pytest.mark.skip
-    @mock.patch('app.buyers.views.buyers.render_component')
-    def test_buyer_pages_ok_if_logged_in_as_buyer(self, render_component):
-        props = {
-            "team": {
-                "currentUserName": "My Team",
-                "teamName": "My Team name",
-                "members": [],
-                "teamBriefs": {
-                    "all": [],
-                    "draft": [],
-                    "live": [],
-                    "closed": []
-                },
-                "briefs": {
-                    "all": [],
-                    "draft": [],
-                    "live": [],
-                    "closed": []
-                }
-            }
-        }
-        render_component.return_value.get_props.return_value = props
-
-        with self.app.app_context():
-            self.login_as_buyer()
-            res = self.client.get(self.expand_path('/buyers'))
-            page_text = res.get_data(as_text=True)
-            assert res.status_code == 200
-            assert 'private' in res.headers['Cache-Control']
-            if feature.is_active('TEAM_VIEW'):
-                assert 'My Team' in page_text
-                assert 'My Team name' in page_text
-
-
 class TestTermsUpdate(BaseApplicationTest):
 
     payload = {
