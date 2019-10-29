@@ -9,5 +9,6 @@ routes:
 services:
 - ups-dm-common
 - ups-dm-buyer
+- marketplace-redis-sessions
 applications:
 - name: dm-buyer

@@ -18,8 +18,6 @@ class Config(object):
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = 'Lax'
 
-    PERMANENT_SESSION_LIFETIME = 36*3600
-
     CSRF_ENABLED = True
     CSRF_TIME_LIMIT = 8*3600
 
@@ -109,6 +107,15 @@ class Config(object):
 
     MULTI_CANDIDATE_PUBLISHED_DATE = pendulum.create(2018, 4, 17)
 
+    # redis
+    REDIS_SESSIONS = True
+    REDIS_SERVER_HOST = '127.0.0.1'
+    REDIS_SERVER_PORT = 6379
+    REDIS_SERVER_PASSWORD = None
+    REDIS_SSL = False
+    REDIS_SSL_HOST_REQ = None
+    REDIS_SSL_CA_CERTS = None
+
 
 class Test(Config):
     DEBUG = True
@@ -133,6 +140,8 @@ class Test(Config):
         'DM_FRAMEWORK': False,
         'TEAM_VIEW': True
     }
+
+    REDIS_SESSIONS = False
 
 
 class Development(Config):
@@ -170,6 +179,10 @@ class Live(Config):
     REACT_BUNDLE_URL = 'https://dm-frontend.apps.b.cld.gov.au/bundle/'
     REACT_RENDER_URL = 'https://dm-frontend.apps.b.cld.gov.au/render'
     REACT_RENDER = True
+
+    REDIS_SSL = True
+    REDIS_SSL_CA_CERTS = '/etc/ssl/certs/ca-certificates.crt'
+    REDIS_SSL_HOST_REQ = True
 
 
 class Preview(Live):

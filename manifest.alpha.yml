@@ -12,3 +12,4 @@ applications:
   - ups-secret-service
   - ups-dm-alpha-common
   - ups-dm-alpha-buyer
+  - marketplace-y-redis-sessions

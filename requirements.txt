@@ -30,6 +30,7 @@ et-xmlfile==1.0.1
 Flask==1.0.2
 Flask-Caching==1.4.0
 Flask-FeatureFlags==0.6
+Flask-KVSession==0.6.2
 Flask-Login==0.4.0
 Flask-Script==2.0.5
 Flask-WeasyPrint==0.5
@@ -85,9 +86,11 @@ python-json-logger==0.1.7
 pytz==2017.2
 pytzdata==2017.2
 PyYAML==3.12
+redis==3.3.8
 requests==2.18.4
 rollbar==0.13.11
 s3transfer==0.1.12
+simplekv==0.13.0
 singledispatch==3.4.0.3
 six==1.10.0
 tinycss==0.4
