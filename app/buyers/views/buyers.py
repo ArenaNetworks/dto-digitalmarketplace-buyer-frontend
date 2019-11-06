@@ -44,112 +44,9 @@ from dmutils.file import s3_download_file
 import mimetypes
 
 
-@buyers.route('/buyers')
-@buyers.route('/buyers/<view>')
-def buyer_dashboard(view=None):
-    if feature.is_active('TEAM_VIEW'):
-        current_user_name = current_user.name
-        email_domain = current_user.email_address.split('@')[-1]
-        teammembers_response = data_api_client.req.teammembers(email_domain).get()
-        teamname = teammembers_response['teamname']
-        teammembers = list(sorted(teammembers_response['teammembers'], key=lambda tm: tm['name']))
-
-        team_briefs = data_api_client.req.briefs().teammembers(email_domain).get()
-
-        # team_draft_briefs = add_unanswered_counts_to_briefs(
-        #     [brief for brief in team_briefs if brief['status'] == 'draft'], content_loader)
-        team_draft_briefs = []
-        team_live_briefs = [brief for brief in team_briefs if brief['status'] == 'live']
-        team_closed_briefs = [brief for brief in team_briefs if brief['status'] == 'closed']
-
-        user_briefs = data_api_client.find_briefs(current_user.id).get('briefs', [])
-        draft_briefs = add_unanswered_counts_to_briefs(
-            [brief for brief in user_briefs if brief['status'] == 'draft'], content_loader)
-        live_briefs = [brief for brief in user_briefs if brief['status'] == 'live']
-        closed_briefs = [brief for brief in user_briefs if brief['status'] == 'closed']
-
-        props = {
-            "flag": feature.is_active('TEAM_VIEW'),
-            "team": {
-                "currentUserName": current_user_name,
-                "teamName": teamname,
-                "members": teammembers,
-                "teamBriefs": {
-                    "draft": team_draft_briefs,
-                    "live": team_live_briefs,
-                    "closed": team_closed_briefs
-                },
-                "briefs": {
-                    "draft": draft_briefs,
-                    "live": live_briefs,
-                    "closed": closed_briefs
-                }
-            }
-        }
-
-        rendered_component = render_component(
-            'bundles/BuyerDashboard/BuyerDashboardWidget.js',
-            props
-        )
-
-        return render_template(
-            '_react.html',
-            page_title="Dashboard",
-            component=rendered_component,
-        )
-
-    else:
-        def get_teamname():
-            email_domain = current_user.email_address.split('@')[-1]
-            teammembers_response = data_api_client.req.teammembers(email_domain).get()
-            teammembers = list(sorted(teammembers_response['teammembers'], key=lambda tm: tm['name']))
-            return teammembers_response['teamname']
-
-        user_briefs = data_api_client.find_briefs(current_user.id).get('briefs', [])
-        draft_briefs = add_unanswered_counts_to_briefs([brief for brief in user_briefs if brief['status'] == 'draft'],
-                                                       content_loader)
-        live_briefs = [brief for brief in user_briefs if brief['status'] == 'live']
-        closed_briefs = [brief for brief in user_briefs if brief['status'] == 'closed']
-
-        return render_template(
-            'buyers/dashboard-briefs.html',
-            draft_briefs=draft_briefs,
-            live_briefs=live_briefs,
-            closed_briefs=closed_briefs,
-            teamname=get_teamname()
-        )
-
-
-@buyers.route('/buyers/overview')
-def buyer_overview():
-    email_domain = current_user.email_address.split('@')[-1]
-    teammembers_response = data_api_client.req.teammembers(email_domain).get()
-
-    teammembers = list(sorted(teammembers_response['teammembers'], key=lambda tm: tm['name']))
-
-    rendered_component = render_component(
-        'bundles/BuyerDashboard/BuyerDashboardWidget.js',
-        {
-            'teammembers': teammembers,
-
-            'meta': {
-                'domain': email_domain,
-                'teamname': teammembers_response['teamname']
-            },
-            'flag': feature.is_active('TEAM_VIEW')
-        }
-    )
-
-    return render_template(
-        '_react.html',
-        page_title="Dashboard",
-        component=rendered_component,
-    )
-
-
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['GET'])
 def start_new_brief(framework_slug, lot_slug):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
 
     if not has_permission_to_edit_brief():
@@ -176,7 +73,7 @@ def start_new_brief(framework_slug, lot_slug):
 
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/create', methods=['POST'])
 def create_new_brief(framework_slug, lot_slug):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
 
     if not has_permission_to_edit_brief():
@@ -233,7 +130,7 @@ def create_new_brief(framework_slug, lot_slug):
 def view_brief_overview(framework_slug, lot_slug, brief_id):
     if lot_slug == 'digital-professionals' or lot_slug == 'training':
         return redirect('/2/brief/{}/overview'.format(brief_id))
-    if lot_slug in ['rfx', 'atm', 'specialist']:
+    if lot_slug in ['rfx', 'atm', 'specialist', 'training2']:
         return redirect('/2/brief/{}/overview/{}'.format(brief_id, lot_slug))
 
     framework, lot = get_framework_and_lot(
@@ -241,7 +138,7 @@ def view_brief_overview(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) and not allowed_email_domain(current_user.id, brief, data_api_client):
         abort(404)
 
@@ -280,7 +177,7 @@ def view_brief_section_summary(framework_slug, lot_slug, brief_id, section_slug)
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -312,7 +209,7 @@ def edit_brief_question(framework_slug, lot_slug, brief_id, section_slug, questi
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -348,7 +245,7 @@ def update_brief_submission(framework_slug, lot_slug, brief_id, section_id, ques
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -556,7 +453,7 @@ def download_brief_response_attachment(framework_slug, lot_slug, brief_id, respo
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -597,7 +494,7 @@ def download_brief_responses(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -634,7 +531,7 @@ def download_brief_responses_xlsx(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ):
         abort(404)
 
@@ -681,7 +578,7 @@ def download_brief_responses_xlsx(framework_slug, lot_slug, brief_id):
 
 @buyers.route('/buyers/frameworks/<framework_slug>/requirements/<lot_slug>/<brief_id>/publish', methods=['GET', 'POST'])
 def publish_brief(framework_slug, lot_slug, brief_id):
-    if lot_slug in ['digital-outcome', 'digital-professionals']:
+    if lot_slug in ['digital-outcome', 'digital-professionals', 'training']:
         abort(404)
     TZ = current_app.config['DM_TIMEZONE']
 
@@ -689,7 +586,7 @@ def publish_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 
@@ -757,7 +654,7 @@ def view_brief_timeline(framework_slug, lot_slug, brief_id):
     get_framework_and_lot(framework_slug, lot_slug, data_api_client, status='live', must_allow_brief=True)
     brief = data_api_client.get_brief(brief_id)["briefs"]
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or brief.get('status') != 'live':
         abort(404)
 
@@ -776,7 +673,7 @@ def delete_a_brief(framework_slug, lot_slug, brief_id):
     brief = data_api_client.get_brief(brief_id)["briefs"]
 
     if not is_brief_correct(
-            brief, framework_slug, lot_slug, current_user.id
+            brief, framework_slug, lot_slug, current_user.id, data_api_client
     ) or not brief_can_be_edited(brief):
         abort(404)
 

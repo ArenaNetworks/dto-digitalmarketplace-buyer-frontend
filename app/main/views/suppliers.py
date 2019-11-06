@@ -1,6 +1,6 @@
 # coding=utf-8
 
-from flask import render_template, current_app, flash, jsonify, url_for
+from flask import render_template, current_app, flash, jsonify, url_for, abort
 from flask_login import current_user, login_required
 
 from app.main import main
@@ -38,12 +38,16 @@ def get_supplier(code):
         for price in supplier['prices']
     ))
 
-    supplier["caseStudies"] = []
-    for casestudy_id in supplier['case_study_ids']:
-        casestudy = DataAPIClient().get_case_study(casestudy_id)['caseStudy']
-        supplier["caseStudies"].append(casestudy)
-
     owns_profile = user_owns_page(code)
+
+    supplier["caseStudies"] = []
+    if owns_profile:
+        for casestudy_id in supplier['case_study_ids']:
+            casestudy = DataAPIClient().get_case_study(casestudy_id)['caseStudy']
+            supplier["caseStudies"].append(casestudy)
+    else:
+        supplier['case_studies'] = []
+        supplier['case_study_ids'] = []
 
     if request_wants_json():
         return jsonify(dict(supplier))
@@ -91,22 +95,11 @@ def get_supplier_case_study(casestudy_id):
     casestudy = DataAPIClient().get_case_study(casestudy_id)['caseStudy']
 
     supplier_code = casestudy.get('supplierCode') if casestudy else None
-    if supplier_code:
-        supplier = DataAPIClient().get_supplier(supplier_code)['supplier']
-        casestudy['supplier_name'] = supplier['name']
-        casestudy['supplier_url'] = url_for('main.get_supplier', code=supplier_code)
-    else:
-        # buyers do not get referee data
-        if 'refereeEmail' in casestudy:
-            del casestudy['refereeEmail']
-        if 'refereeName' in casestudy:
-            del casestudy['refereeName']
-        if 'refereePosition' in casestudy:
-            del casestudy['refereePosition']
-
-    if not can_view_supplier_page(supplier_code):
-        flash('buyer-role-required', 'error')
-        return current_app.login_manager.unauthorized()
+    if not supplier_code or not user_owns_page(supplier_code):
+        abort(404)
+    supplier = DataAPIClient().get_supplier(supplier_code)['supplier']
+    casestudy['supplier_name'] = supplier['name']
+    casestudy['supplier_url'] = url_for('main.get_supplier', code=supplier_code)
 
     if request_wants_json():
         return jsonify(casestudy)

@@ -209,11 +209,13 @@ class TestViewWorkOrder(BaseApplicationTest):
 
             assert res.status_code == 404
 
-    def test_404_if_work_order_not_allowed_access(self, data_api_client):
+    @mock.patch('app.buyers.views.work_orders.is_brief_associated_with_user')
+    def test_404_if_work_order_not_allowed_access(self, is_brief_associated_with_user, data_api_client):
         with self.app.app_context():
             self.login_as_buyer(user_id=1)
             data_api_client.get_work_order.return_value = test_work_order
             data_api_client.get_brief.return_value = test_brief
+            is_brief_associated_with_user.return_value = False
 
             res = self.client.get(self.expand_path(
                 '/work-orders/1234')
@@ -221,18 +223,22 @@ class TestViewWorkOrder(BaseApplicationTest):
 
             assert res.status_code == 404
 
-    def test_work_order_pdf(self, data_api_client):
+    @mock.patch('app.buyers.views.work_orders.is_brief_associated_with_user')
+    def test_work_order_pdf(self, is_brief_associated_with_user, data_api_client):
         self.login_as_buyer()
         data_api_client.get_work_order.return_value = test_work_order
         data_api_client.get_brief.return_value = test_brief
+        is_brief_associated_with_user.return_value = True
         res = self.client.get(self.expand_path('/work-orders/workorder_1234.pdf'))
         assert 200 == res.status_code
         assert res.mimetype == 'application/pdf'
 
-    def test_work_order_pdf_unauthorised(self, data_api_client):
+    @mock.patch('app.buyers.views.work_orders.is_brief_associated_with_user')
+    def test_work_order_pdf_unauthorised(self, is_brief_associated_with_user, data_api_client):
         self.login_as_buyer(user_id=1)
         data_api_client.get_work_order.return_value = test_work_order
         data_api_client.get_brief.return_value = test_brief
+        is_brief_associated_with_user.return_value = False
         res = self.client.get(self.expand_path('/work-orders/workorder_1234.pdf'))
         assert 404 == res.status_code
         assert res.mimetype != 'application/pdf'
@@ -249,21 +255,25 @@ class TestEditWorkOrderQuestion(BaseApplicationTest):
             res = self.client.get(self.expand_path('/work-orders/1234/questions/number'))
             assert res.status_code == 200
 
-    def test_404_if_work_order_question_not_authorised(self, data_api_client):
+    @mock.patch('app.buyers.views.work_orders.is_brief_associated_with_user')
+    def test_404_if_work_order_question_not_authorised(self, is_brief_associated_with_user, data_api_client):
         with self.app.app_context():
             self.login_as_buyer(user_id=1)
             data_api_client.get_brief.return_value = test_brief
             data_api_client.get_work_order.return_value = test_work_order
+            is_brief_associated_with_user.return_value = False
 
             res = self.client.get(self.expand_path('/work-orders/1234/questions/number'))
 
             assert res.status_code == 404
 
-    def test_404_if_work_order_question_not_found(self, data_api_client):
+    @mock.patch('app.buyers.views.work_orders.is_brief_associated_with_user')
+    def test_404_if_work_order_question_not_found(self, is_brief_associated_with_user, data_api_client):
         with self.app.app_context():
             self.login_as_buyer()
             data_api_client.get_brief.return_value = test_brief
             data_api_client.get_work_order.return_value = test_work_order
+            is_brief_associated_with_user.return_value = False
 
             res = self.client.get(self.expand_path(
                 '/work-orders/1234/questions/blah')
@@ -286,10 +296,12 @@ class TestEditWorkOrderQuestion(BaseApplicationTest):
         assert res.status_code == 302
         data_api_client.update_work_order.assert_called_with(1234, {'number': '4321'})
 
-    def test_404_if_update_work_order_question_not_authorised(self, data_api_client):
+    @mock.patch('app.buyers.views.work_orders.is_brief_associated_with_user')
+    def test_404_if_update_work_order_question_not_authorised(self, is_brief_associated_with_user, data_api_client):
         self.login_as_buyer(user_id=1)
         data_api_client.get_brief.return_value = test_brief
         data_api_client.get_work_order.return_value = test_work_order
+        is_brief_associated_with_user.return_value = False
 
         res = self.client.post(
             self.expand_path('/work-orders/1234/questions/number'),
