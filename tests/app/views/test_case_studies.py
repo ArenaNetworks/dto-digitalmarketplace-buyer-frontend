@@ -40,7 +40,7 @@ class TestCaseStudyViewPage(BaseApplicationTest):
 
         res = self.client.get(self.url_for('main.get_supplier_case_study', casestudy_id=1))
 
-        assert res.status_code == 302
+        assert res.status_code == 404
 
     def test_suppliers_can_see_own_case_study_page(self, render_component, api_client):
         api_client.return_value.get_case_study.return_value = self.case_study
@@ -54,7 +54,7 @@ class TestCaseStudyViewPage(BaseApplicationTest):
         assert res.status_code == 200
         # assert len(document.xpath('//div[@id="react-bundle-casestudy-view-state"]')) > 0
 
-    def test_should_have_supplier_details_on_supplier_page(self, render_component, api_client):
+    def test_buyer_unable_to_view_case_study(self, render_component, api_client):
         self.login_as_buyer()
         api_client.return_value.get_case_study.return_value = self.case_study
         render_component.return_value.get_props.return_value = {}
@@ -63,5 +63,5 @@ class TestCaseStudyViewPage(BaseApplicationTest):
         res = self.client.get(self.url_for('main.get_supplier_case_study', casestudy_id=1))
         # document = html.fromstring(res.get_data(as_text=True))
 
-        assert res.status_code == 200
+        assert res.status_code == 404
         # assert document.xpath('//h2')[0].text.strip() == 'Gizmo Refactoring'
