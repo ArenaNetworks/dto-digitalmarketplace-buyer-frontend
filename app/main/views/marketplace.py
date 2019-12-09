@@ -46,13 +46,18 @@ def index():
     total_contracted = metrics.get('total_contracted', {"value": "0"})['value']
 
     check_terms_acceptance()
+    buyer_logged_in = False
+    if current_user.is_authenticated and current_user.role == 'buyer':
+        buyer_logged_in = True
+
     return render_template(
         'index.html',
         suppliers_count=suppliers_count,
         briefs_count=briefs_count,
         briefs_live_count=briefs_live_count,
         awarded_to_smes=awarded_to_smes,
-        total_contracted=total_contracted
+        total_contracted=total_contracted,
+        buyer_logged_in=buyer_logged_in
     )
 
 
