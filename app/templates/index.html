@@ -91,16 +91,16 @@
           </h3>
           <ul class="au-link-list">
             <li>
-              <a href="/2/outcome-choice">Seek proposals for digital outcomes</a>
+              <a href="{% if buyer_logged_in %}/2/outcome-choice{% else %}/api/2/r/seek-proposals-and-quotes-pathway{% endif %}">Seek proposals for digital outcomes</a>
             </li>
             <li>
-              <a href="/2/outcome-choice">Ask the market for an EOI or RFI</a>
+              <a href="{% if buyer_logged_in %}/2/outcome-choice{% else %}/api/2/r/ask-market-pathway{% endif %}">Ask the market for an EOI or RFI</a>
             </li>
             <li>
-              <a href="/2/buyer-specialist/create">Hire a digital specialist</a>
+              <a href="{% if buyer_logged_in %}/2/buyer-specialist/create{% else %}/api/2/r/specialist-pathway{% endif %}">Hire a digital specialist</a>
             </li>
             <li>
-              <a href="/2/buyer-training2/create">Get training to build digital skills</a>
+              <a href="{% if buyer_logged_in %}/2/buyer-training2/create{% else %}/api/2/r/training-support-article{% endif %}">Get training to build digital skills</a>
             </li>
             <li>
               <a href="https://marketplace1.zendesk.com/hc/en-gb/articles/360000556476-Panel-categories-and-rates">View panel categories and rates</a>
