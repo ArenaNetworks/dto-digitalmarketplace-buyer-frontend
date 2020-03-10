@@ -56,6 +56,7 @@ class TestLogin(BaseApplicationTest):
     def test_redirect_on_buyer_login(self, data_api_client):
         with self.app.app_context():
             data_api_client.authenticate_user.return_value = self.user(123, "email@email.com", None, None, 'Name')
+            data_api_client.get_user.return_value = self.user(123, "email@email.com", None, None, 'Name')
             res = self.client.post(self.url_for('main.process_login'), data={
                 'email_address': 'valid@email.com',
                 'password': '1234567890',
@@ -69,6 +70,14 @@ class TestLogin(BaseApplicationTest):
     def test_redirect_on_supplier_login(self, data_api_client):
         with self.app.app_context():
             data_api_client.authenticate_user.return_value = self.user(
+                123,
+                'email@email.com',
+                None,
+                None,
+                'Name',
+                role='supplier'
+            )
+            data_api_client.get_user.return_value = self.user(
                 123,
                 'email@email.com',
                 None,
@@ -113,6 +122,7 @@ class TestLogin(BaseApplicationTest):
     def test_ok_next_url_redirects_buyer_on_login(self, data_api_client):
         with self.app.app_context():
             data_api_client.authenticate_user.return_value = self.user(123, "email@email.com", None, None, 'Name')
+            data_api_client.get_user.return_value = self.user(123, "email@email.com", None, None, 'Name')
             data = {
                 'email_address': 'valid@email.com',
                 'password': '1234567890',
@@ -126,6 +136,7 @@ class TestLogin(BaseApplicationTest):
     def test_bad_next_url_redirects_user(self, data_api_client):
         with self.app.app_context():
             data_api_client.authenticate_user.return_value = self.user(123, "email@email.com", None, None, 'Name')
+            data_api_client.get_user.return_value = self.user(123, "email@email.com", None, None, 'Name')
             data = {
                 'email_address': 'valid@email.com',
                 'password': '1234567890',
@@ -156,6 +167,7 @@ class TestLogin(BaseApplicationTest):
     @mock.patch('app.main.views.login.data_api_client')
     def test_should_return_a_403_for_invalid_login(self, data_api_client):
         data_api_client.authenticate_user.return_value = None
+        data_api_client.get_user.return_value = None
 
         res = self.client.post(self.expand_path('/login'), data={
             'email_address': 'valid@email.com',
