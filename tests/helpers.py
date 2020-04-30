@@ -201,6 +201,7 @@ class BaseApplicationTest(object):
                 terms_accepted_at=terms_accepted_at,
             )
             login_api_client.authenticate_user.return_value = user
+            login_api_client.get_user.return_value = user
 
             self.get_user_patch = patch.object(data_api_client, 'get_user', return_value=user)
             self.get_user_patch.start()

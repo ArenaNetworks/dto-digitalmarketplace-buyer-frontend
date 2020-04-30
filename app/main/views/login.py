@@ -62,6 +62,10 @@ def process_login():
         login_user(user)
         current_app.logger.info('login.success: {user}', extra={'user': user_logging_string(user)})
         check_terms_acceptance()
+        if current_user.role == 'buyer':
+            user = User.load_user(data_api_client, current_user.id)
+            if not user.is_team_member and user.must_join_team:
+                next_url = '/2/team/join'
         return redirect_logged_in_user(next_url, result.get('validation_result', None))
 
     else:
