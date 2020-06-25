@@ -7,7 +7,7 @@ import json
 from flask.helpers import url_for
 import os
 from flask_login import current_user
-from flask import abort, render_template, request, redirect, current_app, jsonify
+from flask import abort, render_template, request, redirect, current_app, jsonify, make_response
 import flask_featureflags as feature
 from app.api_client.data import DataAPIClient
 from app.main.utils import get_page_list
@@ -334,10 +334,12 @@ def supplier_search():
     }
 
     if request_wants_json():
-        return jsonify(dict(props))
+        json_response = make_response(jsonify(dict(props)))
+        json_response.headers['Vary'] = 'Accept'
+        return json_response
     else:
         component = render_component('bundles/Search/SearchWidget.js', props)
-        return render_template(
+        html_response = make_response(render_template(
             '_react.html',
             page_title='Seller catalogue',
             component=component,
@@ -345,4 +347,6 @@ def supplier_search():
                 {'link': url_for('main.index'), 'label': 'Home'},
                 {'label': 'Seller catalogue'}
             ]
-        )
+        ))
+        html_response.headers['Vary'] = 'Accept'
+        return html_response

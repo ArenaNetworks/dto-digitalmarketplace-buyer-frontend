@@ -1,7 +1,7 @@
 applications:
 - name: dm-rc-buyer
   command: ./scripts/cf_run_app.sh
-  buildpack: python_buildpack
+  buildpack: python2_buildpack
   memory: 1G
   disk_quota: 512M
   instances: 1
@@ -12,4 +12,4 @@ applications:
   - ups-secret-service
   - ups-dm-rc-common
   - ups-dm-rc-buyer
-  - marketplace-dev-redis-sessions
+  - marketplace-y-redis-sessions
