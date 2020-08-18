@@ -228,7 +228,7 @@ def supplier_search():
         seller_type = details.get('seller_type', {})
 
         is_recruiter = details.get('is_recruiter', False)
-        if is_recruiter == 'true' and 'recruiter' not in seller_type.keys():
+        if is_recruiter == 'true' and seller_type and 'recruiter' not in seller_type.keys():
             seller_type['recruitment'] = True
 
         result = {
