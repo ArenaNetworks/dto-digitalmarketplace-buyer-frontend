@@ -47,7 +47,7 @@ class Config(object):
     DM_GENERIC_NOREPLY_EMAIL = 'no-reply@marketplace.digital.gov.au'
     DM_GENERIC_ADMIN_NAME = 'Digital Marketplace Admin'
 
-    DM_GENERIC_SUPPORT_EMAIL = 'marketplace@digital.gov.au'
+    DM_GENERIC_SUPPORT_EMAIL = 'marketplace@dta.gov.au'
     DM_GENERIC_SUPPORT_NAME = 'Digital Marketplace'
 
     RESET_PASSWORD_EMAIL_NAME = DM_GENERIC_ADMIN_NAME
