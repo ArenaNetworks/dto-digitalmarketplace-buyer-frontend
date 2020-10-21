@@ -44,10 +44,10 @@ class Config(object):
     DM_TEAM_EMAIL = None
     DM_TEAM_SLACK_WEBHOOK = None
 
-    DM_GENERIC_NOREPLY_EMAIL = 'no-reply@marketplace.digital.gov.au'
+    DM_GENERIC_NOREPLY_EMAIL = 'no-reply@marketplace.dta.gov.au'
     DM_GENERIC_ADMIN_NAME = 'Digital Marketplace Admin'
 
-    DM_GENERIC_SUPPORT_EMAIL = 'marketplace@digital.gov.au'
+    DM_GENERIC_SUPPORT_EMAIL = 'marketplace@dta.gov.au'
     DM_GENERIC_SUPPORT_NAME = 'Digital Marketplace'
 
     RESET_PASSWORD_EMAIL_NAME = DM_GENERIC_ADMIN_NAME
@@ -55,7 +55,7 @@ class Config(object):
     RESET_PASSWORD_EMAIL_SUBJECT = 'Reset your Digital Marketplace password [SEC=UNCLASSIFIED]'
 
     BUYER_INVITE_REQUEST_SUBJECT = 'Buyer Account Invite Request [SEC=UNCLASSIFIED]'
-    BUYER_INVITE_REQUEST_ADMIN_EMAIL = 'marketplace+buyer-request@digital.gov.au'
+    BUYER_INVITE_REQUEST_ADMIN_EMAIL = 'marketplace@dta.gov.au'
     BUYER_INVITE_REQUEST_EMAIL_FROM = DM_GENERIC_NOREPLY_EMAIL
     BUYER_INVITE_REQUEST_EMAIL_NAME = DM_GENERIC_ADMIN_NAME
     BUYER_INVITE_MANAGER_CONFIRMATION_SUBJECT = 'Digital Marketplace buyer account request [SEC=UNCLASSIFIED]'
