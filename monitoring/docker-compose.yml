@@ -1,5 +1,5 @@
 sensu-server:
-  image: ausdto/monitoring-stack
+  image: arenanetworks/monitoring-stack
   ports:
     - "5672:5672"
     - "3000:3000"

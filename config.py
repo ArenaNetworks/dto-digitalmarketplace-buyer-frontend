@@ -5,7 +5,6 @@ import pendulum
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-
 class Config(object):
 
     VERSION = get_version_label(
@@ -107,9 +106,16 @@ class Config(object):
 
     MULTI_CANDIDATE_PUBLISHED_DATE = pendulum.create(2018, 4, 17)
 
+    try:
+        print("REDIS_SERVER_HOST:", os.environ['REDIS_SERVER_HOST'])
+        REDIS_HOST = os.environ['REDIS_SERVER_HOST']
+    except KeyError:
+        print("Environment variable 'REDIS_SERVER_HOST' does not exist using value: host.docker.internal")
+        REDIS_HOST = "host.docker.internal"
+
     # redis
     REDIS_SESSIONS = True
-    REDIS_SERVER_HOST = '127.0.0.1'
+    REDIS_SERVER_HOST = REDIS_HOST
     REDIS_SERVER_PORT = 6379
     REDIS_SERVER_PASSWORD = None
     REDIS_SSL = False
@@ -123,7 +129,7 @@ class Test(Config):
     CSRF_ENABLED = False
     CSRF_FAKED = True
 
-    DM_DATA_API_URL = "http://localhost:5000/api/"
+    DM_DATA_API_URL = "http://host.docker.internal:5000/api/"
     DM_DATA_API_AUTH_TOKEN = "myToken"
 
     # Used a fixed timezone for tests. Using Sydney timezone will catch more timezone bugs than London.
@@ -149,13 +155,14 @@ class Development(Config):
     SESSION_COOKIE_SECURE = False
     DM_SEARCH_PAGE_SIZE = 5
 
-    DM_DATA_API_URL = "http://localhost:5000/api/"
+    DM_DATA_API_URL = "http://host.docker.internal:5000/api/"
     DM_DATA_API_AUTH_TOKEN = "myToken"
     DM_DEFAULT_CACHE_MAX_AGE = 60
 
     SECRET_KEY = 'DevKeyDevKeyDevKeyDevKeyDevKeyDevKeyDevKeyX='
     SHARED_EMAIL_KEY = SECRET_KEY
     DM_SEND_EMAIL_TO_STDERR = True
+    REDIS_SERVER_HOST = "host.docker.internal"
 
 
 class Live(Config):

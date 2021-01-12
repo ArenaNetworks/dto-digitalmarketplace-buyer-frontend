@@ -46,4 +46,10 @@ show_environment:
 	@echo "Environment variables in use:"
 	@env | grep DM_ || true
 
+docker:
+	docker build -t dto-buyer-frontend .
+
+docker-run:
+	docker run -it -p 5002:5002 dto-buyer-frontend bash
+	
 .PHONY: run_all run_app virtualenv requirements requirements_for_test frontend_build test test_pep8 test_python test_javascript show_environment
